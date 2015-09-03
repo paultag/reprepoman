@@ -1,0 +1,80 @@
+#!/bin/sh
+set -e
+
+ARCHIVE=$1
+FQDN=my.shed.bike
+
+if [ "x${ARCHIVE}" != "x" ]; then
+    echo "Give me an archive name"
+    exit 1
+fi
+
+EXTERNAL_PATH=${FQDN}/${ARCHIVE}
+REPO_ROOT=`pwd`/repos
+PUBLIC_ROOT=`pwd`/www
+GPG_HOMEDIR=`pwd`/private/${ARCHIVE}/.gnupg 
+INCOMING=`pwd`/incoming
+
+export GNUPGHOME=${GPG_HOMEDIR}
+
+if [ ! -d ${PUBLIC_ROOT} ]; then
+    mkdir -p ${PUBLIC_ROOT}
+fi
+if [ ! -d ${REPO_ROOT} ]; then
+    mkdir -p ${REPO_ROOT}
+fi
+if [ ! -d ${INCOMING} ]; then
+    mkdir -p ${INCOMING}
+fi
+
+if [ ! -d ${GPG_HOMEDIR} ]; then
+    mkdir -p ${GPG_HOMEDIR}
+    chmod 0700 ${GPG_HOMEDIR}
+    gpg2 --homedir=${GPG_HOMEDIR} --batch --gen-key <<EOF
+%echo Generating the Archive Key
+Key-Type: RSA
+Key-Length: 2048
+Subkey-Type: ELG-E
+Subkey-Length: 2048
+Name-Real: ${EXTERNAL_PATH}
+Name-Email: noreply@${FQDN}
+Expire-Date: 0
+%commit
+%echo done
+EOF
+    gpg2 --homedir=${GPG_HOMEDIR} \
+         --armor --export ${ARCHIVE} > ${REPO_ROOT}/${ARCHIVE}.asc
+fi
+
+OPENPGP_KEY=$(gpg --homedir=${GPG_HOMEDIR} --list-key ${EXTERNAL_PATH} \
+    | grep pub \
+    | awk '{print $2}' \
+    | awk -F '/' '{print $2}')
+
+mkdir -p \
+    ${REPO_ROOT}/${ARCHIVE}/conf \
+    ${REPO_ROOT}/${ARCHIVE}/incoming
+
+cd ${REPO_ROOT}/${ARCHIVE}
+cat - > conf/distributions <<EOF
+Codename: sid
+Suite: unstable
+Components: main
+Architectures: amd64 source
+# Tracking: all includechanges includelogs
+SignWith: ${EXTERNAL_PATH}
+# Log:
+#  --changes /home/tag/tmp/repo/notify.sh
+EOF
+
+reprepro --gnupghome=${GPG_HOMEDIR} createsymlinks
+reprepro --gnupghome=${GPG_HOMEDIR} export
+
+if [ ! -d ${PUBLIC_ROOT}/${ARCHIVE} ]; then
+    mkdir -p ${PUBLIC_ROOT}/${ARCHIVE}
+    ln -s `pwd`/dists ${PUBLIC_ROOT}/${ARCHIVE}/dists
+fi
+
+if [ ! -d ${INCOMING}/${ARCHIVE} ]; then
+    ln -s `pwd`/incoming ${REPO_ROOT}/${ARCHIVE}/incoming
+fi
