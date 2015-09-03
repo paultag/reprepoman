@@ -58,7 +58,10 @@ cd ${REPO_ROOT}/${ARCHIVE}
 cat - > minion-trigger <<EOF
 #!/bin/sh
 set -e
-exec minion reprepro \$@
+exec minion reprepro \
+    -archive=${ARCHIVE}
+    -fqdn=${FQDN} \
+    \$@
 EOF
 chmod +x minion-trigger
 
