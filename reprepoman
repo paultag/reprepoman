@@ -54,6 +54,14 @@ mkdir -p \
 chmod ug+rwx ${REPO_ROOT}/${ARCHIVE}/incoming
 
 cd ${REPO_ROOT}/${ARCHIVE}
+
+cat - > minion-trigger <<EOF
+#!/bin/sh
+set -e
+exec minion reprepro \$@
+EOF
+chmod +x minion-trigger
+
 cat - > conf/distributions <<EOF
 Codename: sid
 Suite: unstable
@@ -61,8 +69,8 @@ Components: main
 Architectures: amd64 source
 Tracking: all includechanges includelogs
 SignWith: ${EXTERNAL_PATH}
-# Log:
-#  --changes /home/tag/tmp/repo/notify.sh
+Log:
+ --type=dsc minion-trigger
 EOF
 
 reprepro --gnupghome=${GPG_HOMEDIR} createsymlinks
