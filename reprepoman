@@ -59,7 +59,7 @@ Codename: sid
 Suite: unstable
 Components: main
 Architectures: amd64 source
-# Tracking: all includechanges includelogs
+Tracking: all includechanges includelogs
 SignWith: ${EXTERNAL_PATH}
 # Log:
 #  --changes /home/tag/tmp/repo/notify.sh
