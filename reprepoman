@@ -56,6 +56,8 @@ mkdir -p \
     ${REPO_ROOT}/${ARCHIVE}/conf \
     ${REPO_ROOT}/${ARCHIVE}/incoming
 
+chmod ug+rwx ${REPO_ROOT}/${ARCHIVE}/incoming
+
 cd ${REPO_ROOT}/${ARCHIVE}
 cat - > conf/distributions <<EOF
 Codename: sid
