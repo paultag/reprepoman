@@ -1,10 +1,11 @@
 #!/bin/sh
+# Copyright (c) 2015, Paul R. Tagliamonte <paultag@debian.org>, MIT/Expat
 set -e
 
 ARCHIVE=$1
 FQDN=my.shed.bike
 
-if [ "x${ARCHIVE}" != "x" ]; then
+if [ "x${ARCHIVE}" = "x" ]; then
     echo "Give me an archive name"
     exit 1
 fi
@@ -75,6 +76,10 @@ if [ ! -d ${PUBLIC_ROOT}/${ARCHIVE} ]; then
     ln -s `pwd`/dists ${PUBLIC_ROOT}/${ARCHIVE}/dists
 fi
 
+if [ ! -e ${PUBLIC_ROOT}/${ARCHIVE}.asc ]; then
+    ln -s `pwd`/../${ARCHIVE}.asc ${PUBLIC_ROOT}/${ARCHIVE}.asc
+fi
+
 if [ ! -d ${INCOMING}/${ARCHIVE} ]; then
-    ln -s `pwd`/incoming ${REPO_ROOT}/${ARCHIVE}/incoming
+    ln -s `pwd`/incoming ${INCOMING}/${ARCHIVE}
 fi
