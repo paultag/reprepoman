@@ -58,7 +58,7 @@ cd ${REPO_ROOT}/${ARCHIVE}
 cat - > minion-trigger <<EOF
 #!/bin/sh
 set -e
-exec minion remote \$@
+exec minion reprepro \$@
 EOF
 chmod +x minion-trigger
 
