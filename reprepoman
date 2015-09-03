@@ -47,11 +47,6 @@ EOF
          --armor --export ${ARCHIVE} > ${REPO_ROOT}/${ARCHIVE}.asc
 fi
 
-OPENPGP_KEY=$(gpg --homedir=${GPG_HOMEDIR} --list-key ${EXTERNAL_PATH} \
-    | grep pub \
-    | awk '{print $2}' \
-    | awk -F '/' '{print $2}')
-
 mkdir -p \
     ${REPO_ROOT}/${ARCHIVE}/conf \
     ${REPO_ROOT}/${ARCHIVE}/incoming
