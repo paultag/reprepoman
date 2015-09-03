@@ -58,7 +58,7 @@ cd ${REPO_ROOT}/${ARCHIVE}
 cat - > minion-trigger <<EOF
 #!/bin/sh
 set -e
-exec minion reprepro \$@
+exec minion remote \$@
 EOF
 chmod +x minion-trigger
 
@@ -70,7 +70,7 @@ Architectures: amd64 source
 Tracking: all includechanges includelogs
 SignWith: ${EXTERNAL_PATH}
 Log:
- --type=dsc minion-trigger
+ --changes +b/minion-trigger
 EOF
 
 reprepro --gnupghome=${GPG_HOMEDIR} createsymlinks
