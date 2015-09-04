@@ -65,11 +65,32 @@ exec minion reprepro \
 EOF
 chmod +x minion-trigger
 
+COMPONENTS="main"
+ARCHES="amd64 source"
+
 cat - > conf/distributions <<EOF
 Codename: sid
 Suite: unstable
-Components: main
-Architectures: amd64 source
+Components: ${COMPONENTS}
+Architectures: ${ARCHES}
+Tracking: all includechanges includelogs
+SignWith: ${EXTERNAL_PATH}
+Log:
+ --changes +b/minion-trigger
+
+Codename: stretch
+Suite: testing
+Components: ${COMPONENTS}
+Architectures: ${ARCHES}
+Tracking: all includechanges includelogs
+SignWith: ${EXTERNAL_PATH}
+Log:
+ --changes +b/minion-trigger
+
+Codename: jessie
+Suite: stable
+Components: ${COMPONENTS}
+Architectures: ${ARCHES}
 Tracking: all includechanges includelogs
 SignWith: ${EXTERNAL_PATH}
 Log:
