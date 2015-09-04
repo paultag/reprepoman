@@ -82,6 +82,7 @@ reprepro --gnupghome=${GPG_HOMEDIR} export
 if [ ! -d ${PUBLIC_ROOT}/${ARCHIVE} ]; then
     mkdir -p ${PUBLIC_ROOT}/${ARCHIVE}
     ln -s `pwd`/dists ${PUBLIC_ROOT}/${ARCHIVE}/dists
+    ln -s `pwd`/pool ${PUBLIC_ROOT}/${ARCHIVE}/pool
 fi
 
 if [ ! -e ${PUBLIC_ROOT}/${ARCHIVE}.asc ]; then
